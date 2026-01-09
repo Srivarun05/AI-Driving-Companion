@@ -21,6 +21,16 @@ semantic search and voice interaction.
 - FAISS
 - Sentence Transformers
 
+## Use Case
+
+- Ask questions like:
+
+- "What does engine warning light mean?"
+
+- "Oil pressure warning"
+
+- "Brake system alert"
+
 ## How to Run
 
 ### Backend
