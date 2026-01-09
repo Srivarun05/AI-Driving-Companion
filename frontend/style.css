@@ -1,0 +1,261 @@
+:root {
+    --neon-cyan: #00f3ff;
+    --neon-blue: #0066ff;
+    --neon-purple: #bc13fe;
+    --glass-bg: rgba(10, 15, 30, 0.65);
+    --glass-border: rgba(0, 243, 255, 0.2);
+    --text-main: #ffffff;
+    --text-dim: #8a9bbd;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+body {
+    background-color: #050510;
+    color: var(--text-main);
+    font-family: 'Rajdhani', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Canvas Background */
+#bg-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* Vignette & Scanline Overlay */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, transparent 0%, #000000 120%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+    background-size: 100% 4px;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+/* Main UI Container */
+.ui-container {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px;
+    padding: 20px;
+}
+
+/* Header Title */
+h1 {
+    font-family: 'Audiowide', cursive;
+    font-size: 3rem;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #fff;
+    text-shadow: 
+        0 0 10px var(--neon-blue),
+        0 0 20px var(--neon-cyan);
+    margin-bottom: 60px;
+    text-align: center;
+    animation: flicker 4s infinite;
+}
+
+/* Central Interactive HUD */
+.hud-ring {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+/* Spinning Outer Rings */
+.ring-outer, .ring-inner {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid transparent;
+}
+
+.ring-outer {
+    width: 100%;
+    height: 100%;
+    border-top: 2px solid var(--neon-cyan);
+    border-bottom: 2px solid var(--neon-blue);
+    animation: spin 8s linear infinite;
+    box-shadow: 0 0 15px var(--neon-blue);
+}
+
+.ring-inner {
+    width: 80%;
+    height: 80%;
+    border-left: 2px solid var(--neon-purple);
+    border-right: 2px solid var(--neon-purple);
+    animation: spin 5s linear infinite reverse;
+    opacity: 0.7;
+}
+
+/* Microphone Button */
+.mic-btn {
+    width: 100px;
+    height: 100px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    border: 1px solid var(--neon-cyan);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+    z-index: 20;
+}
+
+.mic-btn svg {
+    width: 40px;
+    height: 40px;
+    fill: var(--neon-cyan);
+    transition: 0.3s;
+}
+
+.mic-btn:hover {
+    background: rgba(0, 243, 255, 0.1);
+    box-shadow: 0 0 30px var(--neon-cyan);
+    transform: scale(1.05);
+}
+
+.mic-btn.listening {
+    animation: pulse-red 1.5s infinite;
+    border-color: #ff3366;
+    box-shadow: 0 0 30px #ff3366;
+}
+
+.mic-btn.listening svg {
+    fill: #ff3366;
+}
+
+/* Glassmorphism Text Output */
+.interaction-panel {
+    width: 100%;
+    max-width: 600px; 
+    background: rgba(13, 20, 40, 0.7);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.interaction-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+    opacity: 0.7;
+}
+
+.interaction-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.output-text {
+    font-size: 1.4rem;
+    color: #fff;
+    font-weight: 300;
+    min-height: 1.6em;
+}
+
+.cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.2em;
+    background-color: var(--neon-cyan);
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+/* Animations */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse-red {
+    0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
+    70% { box-shadow: 0 0 0 20px rgba(255, 51, 102, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow: 
+            0 0 10px var(--neon-blue),
+            0 0 20px var(--neon-cyan);
+    }
+    20%, 24%, 55% {       
+        text-shadow: none;
+    }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    h1 { font-size: 1.8rem; white-space: normal; } 
+    .hud-ring { width: 160px; height: 160px; }
+    .mic-btn { width: 80px; height: 80px; }
+}
